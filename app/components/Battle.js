@@ -1,6 +1,7 @@
 var React = require('react');
-var Link = require('react-router-dom').Link;
 var PropTypes = require('prop-types');
+var Link = require('react-router-dom').Link;
+var PlayerPreview = require('./PlayerPreview');
 
 
 class PlayerInput extends React.Component {
@@ -11,7 +12,6 @@ class PlayerInput extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
-
     }
 
     handleChange(event) {
@@ -47,7 +47,8 @@ class PlayerInput extends React.Component {
                 <button
                     className='button'
                     type='submit'
-                    disabled={!this.state.username}>
+                    disabled={!this.state.username}
+                >
                     Submit
                 </button>
             </form>
@@ -74,8 +75,10 @@ class Battle extends React.Component {
             playerOneImage: null,
             playerTwoImage: null
         }
-        this.handleSubmit = this.handleSubmit.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleReset = this.handleReset.bind(this);
     }
+
     handleSubmit(id, username) {
         this.setState(function () {
             var newState = {};
@@ -85,9 +88,21 @@ class Battle extends React.Component {
         })
     }
 
+    handleReset(id) {       //dynamic reset either player 1 or player 2
+        this.setState(function () {
+            var newState = {};
+            newState[id + 'Name'] = '';     //id + 'Name' => playerOneName!!!
+            newState[id + 'Image'] = null;  //id + 'Image' => playerOneImage!!!
+            return newState;
+        })
+    }
+
     render() {
+        var match = this.props.match;
         var playerOneName = this.state.playerOneName;
         var playerTwoName = this.state.playerTwoName;
+        var playerOneImage = this.state.playerOneImage;
+        var playerTwoImage = this.state.playerTwoImage;
 
         return (
             <div className='battle-container'>
@@ -98,12 +113,46 @@ class Battle extends React.Component {
                             label='Player One'
                             onSubmit={this.handleSubmit}
                         />}
+                    {playerOneImage !== null &&
+                        <PlayerPreview
+                            avatar={playerOneImage}
+                            username={playerOneName}
+                        >
+                            <button
+                                className='reset'
+                                onClick={this.handleReset.bind(null, 'playerOne')}
+                            >
+                                Reset
+                            </button>
+                        </PlayerPreview>}
                     {!playerTwoName &&
                         <PlayerInput
                             id='playerTwo'
                             label='Player Two'
-                            onSubmit={this.handleSubmit} />}
+                            onSubmit={this.handleSubmit}
+                        />}
+                    {playerTwoImage !== null &&
+                        <PlayerPreview
+                            avatar={playerTwoImage}
+                            username={playerTwoName}
+                        ><button
+                            className='reset'
+                            onClick={this.handleReset.bind(null, 'playerTwo')}
+                        >
+                                Reset
+                        </button>
+                        </PlayerPreview>}
                 </div>
+                {playerOneImage && playerTwoImage &&
+                    <Link
+                        className='button'
+                        to={{
+                            pathname: match.url + '/results',
+                            search: '?playerOneName=' + playerOneName + '&playerTwoName=' + playerTwoName
+                        }}>
+                        Battle
+                    </Link>
+                }
             </div>
         )
     }
