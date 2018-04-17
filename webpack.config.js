@@ -26,20 +26,4 @@ var config = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
 };
 
-// if we're building for production.
-// when we run npm run build the process.env.NODE_ENV will === 'production
-
-// if (process.env.NODE_ENV === 'production') {
-//     config.plugins.push(
-//         new webpack.DefinePlugin({
-//             'process.env': {
-//                 'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-//             }
-//         }),
-//         // new webpack.optimize.UglifyJsPlugin()
-//         new webpack.config.optimization.minimize()
-//     )
-// }
-//  "build": "NODE_ENV='production' webpack -p"  add this line to package.json file
-
 module.exports = config;
